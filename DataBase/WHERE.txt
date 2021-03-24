@@ -1,0 +1,85 @@
+/*
+WHERE 절
+    기본형태
+SELECT *| {DISTINCT} column| 표현식 [별칭],...}
+FROM table
+WHERE 조건(s);
+*/
+/*
+1.  WHERE 절의 기본 사용법
+*/
+-- 100번 부서에 근무하는 사원의 사번, 이름, 직급, 부서번호
+-- 숫자는 단일 인용부호(' ') 사용 x
+SELECT emp_id, emp_name, position, dept_id
+FROM y_emp
+WHERE dept_id = 100;
+
+-- 문자열, 날짜는 단일 인용부호(' ') 사용
+SELECT emp_id, emp_name, position, dept_id
+FROM y_emp
+WHERE position = '부사장';
+
+
+-- Y_EMP 테이블에서 2001년 3월 19일에 입사한 사원의 사원번호, 이름, 급여, 입사일을 조사
+SELECT emp_id, emp_name, salary, hiredate
+FROM y_emp
+WHERE hiredate = '01/03/19';
+
+
+/*
+2. 일반 비교연산자의 사용
+=, <, >, >=, <= 의 의미는 다들 알고있는 의미
+
+<>, !=, ^=   이 3가지는 같지 않다는 의미
+*/
+-- Y_EMP 테이블에서 급여가 400이하인 사원의 이름과 급여를 검색
+SELECT emp_id, emp_name, salary
+FROM y_emp
+WHERE salary <= 300;
+
+-- WHERE 절에서 "salary*12"처럼 표현식에 대한 비교를 할수도 있다.
+-- WHERE 절에서는 별칭 사용 불가
+-- 이 예문에서는 (salary * 12) 뒤에 있는 'annsal'이 별칭이며 where 절에서 annsal을 사용 하면 에러 발생
+SELECT emp_name, salary * 12 annsal
+FROM y_emp
+WHERE salary * 12 > 8000;
+
+-- 대소비교는 숫자만 가능한 것이 아님
+-- 영문자는(ASCII 코드 기준) A < Z
+-- 날짜는 미래로 갈수록 큰 값으로 평가
+SELECT emp_id, emp_name, position, hiredate
+FROM y_emp
+WHERE hiredate > '17/01/01';
+
+/*
+3. 기타 SQL 연산자
+BETWWEN ... AND ...	=> 두 값의 범위 사이
+IN(list...)			=> 괄호 안의 값 목록 중 하나와 일치
+LIKE			=> 문자의 패턴 일치
+*/
+-- BETWWEN (A) AND (B) / NOT BETWWEN (A) AND (B)
+-- A포함 B 미만 사이값
+SELECT emp_name, salary
+FROM y_emp
+WHERE salary  NOT BETWEEN 600 AND 700;
+
+-- IN(list...)  / NOT IN
+-- IN연산자 다음의 괄호 안에 원하는 값의 리스트를 명시하면 리트스에 포함된 값이 결과로 반환
+SELECT emp_id, emp_name, salary, mgr_id
+FROM y_emp
+WHERE mgr_id NOT IN(1001, 1002, 1003);
+
+-- LIKE > 문자를 검색하는 연산자 
+-- _ > 한글자 \
+-- % > 여러글자 혹은 0
+SELECT emp_id, emp_name
+FROM y_emp
+WHERE emp_name LIKE '_선%';
+
+-- 검색할 문자에 실제로'%', '_' 문자가 포함될 경우 > ESCAPE 사용
+-- 해당 문자 앞에 임이의 문자를 지정하고 ESCAPE 옵션을 사용하여 이스케이프 문자로 지정  
+-- 아래의 예제에서는 ???_B를 검색하기 위해 _ 앞에 \(역슬래쉬)를 지정하고 \를 ESCAPE 문자로 지정
+-- ESCAPE 문자는 사용자가 임의로 지정가능
+SELECT *
+FROM pay_grade
+WHERE pay_level LIKE '%\_B' ESCAPE '\';
