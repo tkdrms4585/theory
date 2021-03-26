@@ -139,5 +139,3 @@ FROM y_emp
 WHERE position = '차장'
 OR position = '부장'
 AND salary > 700;
-
--- 
